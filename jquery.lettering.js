@@ -49,6 +49,40 @@
 				injector($(this).children("br").replaceWith(r).end(), r, 'line', '');
 			});
 
+		},
+		
+		smartlines: function() {
+			/**
+			* This one is a 2 step process.
+			* First it runs the lettering 'words' method.
+			* Then it processes those words.
+			*/
+			return this.each(function(){
+				var lines = [],
+					currentTop = 0,
+					r = "eefec303079ad17405c889e092e105b0";
+					
+				// First break into words
+				$(this).lettering('words');
+				
+				// Then see which line each of those words are on and group accordingly
+				$('[class^="word"]', $(this)).each(function(){
+					var word = $(this),
+						pos = word.position();
+						
+					if (pos.top > currentTop){
+						// Start a new line
+						currentTop = pos.top;
+						lines.push('');
+					}
+					// Push the word into it
+					lines[lines.length-1] += word.text() + ' '; // All lines will end in a space.
+				});
+
+				// Now use the injector to replace the content
+				injector($(this).text(lines.join(r)), r, 'line', '');
+								
+			});
 		}
 	};
 
